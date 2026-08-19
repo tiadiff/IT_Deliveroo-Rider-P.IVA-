@@ -29,8 +29,8 @@
 4. Avvia la build e l'esecuzione premendo `F5`. L'app genererà in automatico un file di database SQLite (`deliveroo.db`) al primo avvio.
 
 ## 📝 Regimi Fiscali Supportati
-L'app permette di configurare la propria aliquota fiscale per avere stime sempre precise sull'imponibile. I calcoli integrati considerano:
-- **Coefficiente di redditività:** 67% (tipico per attività di questo tipo).
+L'app permette di configurare la propria aliquota fiscale per avere stime sempre precise sull'imponibile. I calcoli integrati sono tarati per il **Codice ATECO 82.99.99** (Altri servizi di supporto alle imprese nca), tipico per l'attività dei rider. Il sistema considera:
+- **Coefficiente di redditività:** 67%.
 - **Aliquota INPS (Gestione Separata):** 26,07%.
 - **Aliquota Irpef/Sostitutiva:** Configurabile dall'utente anno per anno (es. 5% o 15% per Forfettario).
 
