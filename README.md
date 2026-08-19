@@ -12,6 +12,8 @@
 - **Gestione Flessibile:** Aggiungi, aggiorna o elimina le sessioni di lavoro in qualsiasi momento (CRUD completo).
 - **Dark / Light Mode:** Passa comodamente dal tema chiaro a quello scuro con un semplice clic.
 
+<img width="999" height="514" alt="image" src="https://github.com/user-attachments/assets/e89b23b7-f7c7-4f37-9bb9-5be463bc26fa" />
+
 ## 🛠️ Tecnologie Utilizzate
 - **Linguaggio:** VB.NET
 - **Interfaccia Grafica (UI):** WPF (Windows Presentation Foundation)
