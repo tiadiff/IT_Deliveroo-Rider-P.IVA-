@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <RootNamespace>deliveroo</RootNamespace>
+    <UseWPF>true</UseWPF>
+    <ApplicationIcon>deliverooo.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="deliverooo.png" />
+    <None Remove="deliveroo.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="deliverooo.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Import Include="System.Windows" />
+    <Import Include="System.Windows.Controls" />
+    <Import Include="System.Windows.Data" />
+    <Import Include="System.Windows.Documents" />
+    <Import Include="System.Windows.Input" />
+    <Import Include="System.Windows.Media" />
+    <Import Include="System.Windows.Media.Imaging" />
+    <Import Include="System.Windows.Navigation" />
+    <Import Include="System.Windows.Shapes" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="LiveChartsCore.SkiaSharpView.WPF" Version="2.0.5" />
+    <PackageReference Include="System.Data.SQLite" Version="1.0.118.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="deliverooo.png" />
+    <Resource Include="deliveroo.png" />
+  </ItemGroup>
+
+</Project>

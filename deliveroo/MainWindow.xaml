@@ -1,0 +1,443 @@
+<Window x:Class="MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:deliveroo"
+        mc:Ignorable="d"
+        Title="Rider Dashboard" Height="750" Width="1050"
+        Background="{DynamicResource BgWindow}" Foreground="{DynamicResource FgText}"
+        WindowStartupLocation="CenterScreen" FontFamily="Segoe UI" Icon="/deliverooo.png" ResizeMode="NoResize">
+
+    <Window.Resources>
+        <!-- OMBRE (Effetto "Cozy & Juicy" mantenuto) -->
+        <DropShadowEffect x:Key="CardShadow" BlurRadius="15" ShadowDepth="4" Opacity="0.15" Color="#000000" Direction="270"/>
+
+        <!-- STILE BOTTONI MODERNI (Rispetta i tuoi DynamicResource) -->
+        <Style TargetType="Button">
+            <Setter Property="Padding" Value="15,8"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Opacity" Value="0.8"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Opacity" Value="0.6"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- STILE TEXTBOX E DATEPICKER -->
+        <Style TargetType="TextBox">
+            <Setter Property="Padding" Value="8,6"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+
+        <!-- STILE TABCONTROL E TABITEM RISOLTO -->
+        <Style TargetType="TabControl">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+        <Style TargetType="TabItem">
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="{DynamicResource FgMuted}"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Margin" Value="0,0,20,0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TabItem">
+                        <Border x:Name="Border" Padding="0,10,0,10" Background="Transparent" BorderBrush="Transparent" BorderThickness="0,0,0,3">
+                            <!-- IL FIX DEL CRASH È QUI: ContentSource="Header" -->
+                            <ContentPresenter x:Name="ContentSite" ContentSource="Header" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource FgText}"/>
+                                <Setter Property="Foreground" Value="{DynamicResource FgText}"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Opacity" Value="0.7"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- STILE BASE PER LE CARD (Impaginazione, niente colori così decide il tuo backend) -->
+        <Style x:Key="ModernCardBase" TargetType="Border">
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="Padding" Value="20"/>
+            <Setter Property="Margin" Value="0,0,15,15"/>
+            <Setter Property="Effect" Value="{StaticResource CardShadow}"/>
+            <Setter Property="Width" Value="300"/>
+            <Setter Property="Height" Value="130"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- TOP BAR -->
+        <Grid Grid.Row="0" Margin="0,0,0,20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock FontSize="22" FontWeight="Bold" Foreground="{DynamicResource FgText}" VerticalAlignment="Center"><Run Text="Deliveroo Rider"/><Run Language="it-it" Text=" con Partita IVA"/></TextBlock>
+            <Button x:Name="btnToggleTheme" Grid.Column="1" Content="☀️ Modalità Tema" HorizontalAlignment="Right" Background="{DynamicResource BtnThemeBg}" Foreground="{DynamicResource BtnThemeFg}" BorderBrush="{DynamicResource BorderInput}"/>
+        </Grid>
+
+        <TabControl x:Name="MainTabControl" Grid.Row="1">
+
+            <!-- TAB 1: SESSIONE -->
+            <TabItem Header="Sessione" Margin="0,0,-43,0">
+                <Grid Margin="0,20,0,0">
+                    <ScrollViewer HorizontalAlignment="Left" VerticalScrollBarVisibility="Auto">
+                        <StackPanel MaxWidth="400" HorizontalAlignment="Left">
+                            <Grid Margin="0,0,0,15">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="140"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Label Content="Data:" Foreground="{DynamicResource FgText}" VerticalAlignment="Center" Margin="0,0,55,0"/>
+                                <DatePicker x:Name="dpDate" Margin="107,0,0,0" Grid.ColumnSpan="2"/>
+                            </Grid>
+                            <Grid Margin="0,0,0,15">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="140"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Label Content="Guadagno (€):" Foreground="{DynamicResource FgText}" VerticalAlignment="Center"/>
+                                <TextBox x:Name="tbEarnings" Grid.Column="1"/>
+                            </Grid>
+                            <Grid Margin="0,0,0,15">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="140"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Label Content="Consegne:" Foreground="{DynamicResource FgText}" VerticalAlignment="Center"/>
+                                <TextBox x:Name="tbDeliveries" Grid.Column="1"/>
+                            </Grid>
+                            <Grid Margin="0,0,0,15">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="140"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Label Content="Km percorsi:" Foreground="{DynamicResource FgText}" VerticalAlignment="Center"/>
+                                <TextBox x:Name="tbKm" Grid.Column="1"/>
+                            </Grid>
+                            <Grid Margin="0,0,0,25">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="140"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Label Content="Consumo (km/litro):" Foreground="{DynamicResource FgText}" VerticalAlignment="Center" Grid.ColumnSpan="2" Margin="0,0,11,0"/>
+                                <TextBox x:Name="tbConsumption" Grid.Column="1" Margin="27,0,0,0"/>
+                            </Grid>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                <Button x:Name="btnSave" Content="Salva" Background="{DynamicResource BtnThemeBg}" Foreground="{DynamicResource BtnThemeFg}" Width="266"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <!-- Canvas per il posizionamento libero dell'immagine senza vincoli -->
+                    <Canvas x:Name="canvasSessione" ClipToBounds="False">
+                        <Image x:Name="imgDeliveroo"
+                               Source="deliveroo.png"
+                               Width="81" Height="81"
+                               Canvas.Left="298"
+                               Cursor="No"
+                               RenderOptions.BitmapScalingMode="HighQuality"
+                               MouseLeftButtonDown="ImgDeliveroo_MouseLeftButtonDown"
+                               MouseMove="ImgDeliveroo_MouseMove"
+                               MouseLeftButtonUp="ImgDeliveroo_MouseLeftButtonUp"
+                               LostMouseCapture="ImgDeliveroo_LostMouseCapture"
+                               ToolTip="Trascina con il mouse per posizionare liberamente l'immagine" RenderTransformOrigin="0.543,0.532" IsEnabled="False"/>
+                    </Canvas>
+                </Grid>
+            </TabItem>
+
+            <!-- TAB 2: STORICO -->
+            <TabItem Header="Storico" Margin="872,-2,-884,2">
+                <Grid Margin="0,20,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,0,0,15">
+                        <Button x:Name="btnRefresh" Content="Aggiorna" Margin="0,0,10,0" Background="{DynamicResource BtnThemeBg}" Foreground="{DynamicResource BtnThemeFg}"/>
+                        <Button x:Name="btnEdit" Content="Modifica" Margin="0,0,10,0" IsEnabled="False" Background="{DynamicResource BtnThemeBg}" Foreground="{DynamicResource BtnThemeFg}"/>
+                        <Button x:Name="btnDelete" Content="Elimina" Foreground="#EF5350" Background="{DynamicResource BtnThemeBg}"/>
+                    </StackPanel>
+                    <Border Grid.Row="1" CornerRadius="12" ClipToBounds="True" Effect="{StaticResource CardShadow}">
+                        <DataGrid x:Name="dgSessions" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" BorderThickness="0" RowHeight="35">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Data" Binding="{Binding Date, StringFormat='{}{0:dd/MM/yyyy}'}" Width="150"/>
+                                <DataGridTextColumn Header="Guadagno (€)" Binding="{Binding TotalEarnings}" Width="120"/>
+                                <DataGridTextColumn Header="Consegne" Binding="{Binding Deliveries}" Width="100"/>
+                                <DataGridTextColumn Header="Km" Binding="{Binding Km}" Width="100"/>
+                                <DataGridTextColumn Header="Consumo (km/litro)" Binding="{Binding Consumption}" Width="150"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Border>
+                </Grid>
+            </TabItem>
+
+            <!-- TAB 3: GIORNO -->
+            <TabItem Header="Giorno" Margin="0,0,-12,0">
+                <Grid Margin="0,20,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <StackPanel Grid.Row="0" Margin="0,0,0,20">
+                        <DatePicker x:Name="dpStatDay" Width="200" HorizontalAlignment="Left"/>
+                    </StackPanel>
+
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                        <StackPanel>
+                            <!-- WRAPPANEL: Le card vanno a capo da sole -->
+                            <WrapPanel>
+                                <!-- BOX 1: Lordo -->
+                                <Border Style="{StaticResource ModernCardBase}" Background="{DynamicResource BgCardLordo}" BorderBrush="{DynamicResource BorderCardLordo}" BorderThickness="2" Width="327">
+                                    <StackPanel>
+                                        <TextBlock Text="Lordo Giorno" FontSize="15" FontWeight="Bold" Foreground="{DynamicResource FgCardLordo}"/>
+                                        <TextBlock x:Name="tbLordoGiorno" Text="€ 0.00" FontSize="32" FontWeight="Bold" Foreground="{DynamicResource FgCardLordo}" Margin="0,10,0,0"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- BOX 2: Netto Bonificato -->
+                                <Border Style="{StaticResource ModernCardBase}" Background="{DynamicResource BgCardNettoB}" BorderBrush="{DynamicResource BorderCardNettoB}" BorderThickness="2">
+                                    <StackPanel>
+                                        <TextBlock FontSize="15" FontWeight="Bold" Foreground="{DynamicResource FgCardNettoB}" TextWrapping="Wrap"><Run Text="Netto Bonificato"/><Run Text=" "/><Run Text="(Lordo)"/></TextBlock>
+                                        <TextBlock x:Name="tbNettoBonificatoGiorno" Text="€ 0.00" FontSize="32" FontWeight="Bold" Foreground="{DynamicResource FgCardNettoB}" Margin="0,10,0,0"/>
+                                        <TextBlock FontSize="11" Foreground="{DynamicResource FgMuted}" Margin="0,5,0,0" FontStyle="Italic" Text="Coincide col lordo (P.IVA)"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- BOX 3: Spese Carburante -->
+                                <Border Style="{StaticResource ModernCardBase}" Background="{DynamicResource BgCardSpese}" BorderBrush="{DynamicResource BorderCardSpese}" BorderThickness="2">
+                                    <StackPanel>
+                                        <TextBlock Text="Spese Carburante" FontSize="15" FontWeight="Bold" Foreground="{DynamicResource FgCardSpese}"/>
+                                        <TextBlock x:Name="tbSpeseCarburanteGiorno" Text="€ 0.00" FontSize="32" FontWeight="Bold" Foreground="{DynamicResource FgCardSpese}" Margin="0,10,0,0"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- BOX 4: Tasse e Contributi -->
+                                <Border Style="{StaticResource ModernCardBase}" Background="{DynamicResource BgCard730}" BorderBrush="{DynamicResource BorderCard730}" BorderThickness="2">
+                                    <StackPanel>
+                                        <TextBlock FontSize="15" FontWeight="Bold" Foreground="{DynamicResource FgCard730}"><Run Text="Tasse"/><Run Language="it-it" Text=" e Contributi"/></TextBlock>
+                                        <TextBlock x:Name="tbAccumulo730Giorno" Text="€ 0.00" FontSize="32" FontWeight="Bold" Foreground="{DynamicResource FgCard730}" Margin="0,10,0,0"/>
+                                        <TextBlock FontSize="11" Foreground="{DynamicResource FgMuted}" FontStyle="Italic" Text="Da accantonare (INPS + Imp. Sost.)" Height="24"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- BOX 5: Netto Reale (più grande) -->
+                                <Border Style="{StaticResource ModernCardBase}" Width="350" Background="{DynamicResource BgCardNettoR}" BorderBrush="{DynamicResource BorderCardNettoR}" BorderThickness="3">
+                                    <StackPanel>
+                                        <TextBlock FontSize="17" FontWeight="Bold" Foreground="{DynamicResource FgCardNettoR}"><Run Text="Netto"/><Run Language="it-it" Text=" giornata"/></TextBlock>
+                                        <TextBlock x:Name="tbNettoRealeTascaGiorno" Text="€ 0.00" FontSize="36" FontWeight="Black" Foreground="{DynamicResource FgCardNettoR}" Margin="0,5,0,0"/>
+                                        <TextBlock Text="Soldi che finiscono in tasca" FontSize="12" Foreground="{DynamicResource SubFgCardNettoR}" Margin="0,5,0,0" FontStyle="Italic"/>
+                                    </StackPanel>
+                                </Border>
+                            </WrapPanel>
+
+                            <!-- Statistiche e Voto -->
+                            <Border Style="{StaticResource ModernCardBase}" Width="615" Height="Auto" HorizontalAlignment="Left" Background="{DynamicResource BgWindow}" BorderBrush="{DynamicResource BorderInput}" BorderThickness="1">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0">
+                                        <Label x:Name="lblConsegneGiorno" Content="Numero consegne: 0" FontSize="14" FontWeight="Medium" Foreground="{DynamicResource FgStatsLabels}"/>
+                                        <Label x:Name="lblKmGiorno" Content="Km percorsi: 0.0 km" FontSize="14" FontWeight="Medium" Foreground="{DynamicResource FgStatsLabels}"/>
+                                        <Label x:Name="lblConsumoGiorno" Content="Consumo registrato: - km/litro" FontSize="14" FontWeight="Medium" Foreground="{DynamicResource FgStatsLabels}"/>
+                                        <Label x:Name="lblIncidenzaGiorno" Content="Incidenza carburante: - %" FontSize="14" FontWeight="Medium" Foreground="{DynamicResource FgStatsLabels}"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="20,0">
+                                        <TextBlock Text="EFFICIENZA" Foreground="{DynamicResource FgMuted}" FontSize="12" HorizontalAlignment="Center"/>
+                                        <TextBlock x:Name="tbEfficienzaVotoGiorno" Text="10.0" FontSize="42" FontWeight="Black" Foreground="{DynamicResource FgBadgeVoto}" HorizontalAlignment="Center"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Grid>
+            </TabItem>
+
+            <!-- TAB 4: MESE -->
+            <TabItem Header="Mese" Margin="18,0,-51,0">
+                <Grid Margin="0,20,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <StackPanel Grid.Row="0" Margin="0,0,0,20">
+                        <ComboBox x:Name="cbMonthYear" Width="200" HorizontalAlignment="Left"/>
+                    </StackPanel>
+
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                        <StackPanel>
+                            <WrapPanel>
+                                <!-- Usa esattamente gli stessi Border della Tab Giorno -->
+                                <Border Style="{StaticResource ModernCardBase}" Background="{DynamicResource BgCardLordo}" BorderBrush="{DynamicResource BorderCardLordo}" BorderThickness="2" Width="325">
+                                    <StackPanel>
+                                        <TextBlock Text="Lordo Mensile" FontSize="15" FontWeight="Bold" Foreground="{DynamicResource FgCardLordo}"/>
+                                        <TextBlock x:Name="tbLordoMensile" Text="€ 0.00" FontSize="32" FontWeight="Bold" Foreground="{DynamicResource FgCardLordo}" Margin="0,10,0,0"/>
+                                    </StackPanel>
+                                </Border>
+                                <Border Style="{StaticResource ModernCardBase}" Background="{DynamicResource BgCardNettoB}" BorderBrush="{DynamicResource BorderCardNettoB}" BorderThickness="2">
+                                    <StackPanel>
+                                        <TextBlock FontSize="15" FontWeight="Bold" Foreground="{DynamicResource FgCardNettoB}" TextWrapping="Wrap"><Run Text="Netto Bonificato"/><Run Text=" "/><Run Text="(Lordo)"/></TextBlock>
+                                        <TextBlock x:Name="tbNettoBonificato" Text="€ 0.00" FontSize="32" FontWeight="Bold" Foreground="{DynamicResource FgCardNettoB}" Margin="0,10,0,0"/>
+                                        <TextBlock FontSize="11" Foreground="{DynamicResource FgMuted}" FontStyle="Italic" Height="19" Text="Coincide col lordo (P.IVA)"/>
+                                    </StackPanel>
+                                </Border>
+                                <Border Style="{StaticResource ModernCardBase}" Background="{DynamicResource BgCardSpese}" BorderBrush="{DynamicResource BorderCardSpese}" BorderThickness="2">
+                                    <StackPanel>
+                                        <TextBlock Text="Spese Carburante" FontSize="15" FontWeight="Bold" Foreground="{DynamicResource FgCardSpese}"/>
+                                        <TextBlock x:Name="tbSpeseCarburante" Text="€ 0.00" FontSize="32" FontWeight="Bold" Foreground="{DynamicResource FgCardSpese}" Margin="0,10,0,0"/>
+                                    </StackPanel>
+                                </Border>
+                                <Border Style="{StaticResource ModernCardBase}" Background="{DynamicResource BgCard730}" BorderBrush="{DynamicResource BorderCard730}" BorderThickness="2">
+                                    <StackPanel>
+                                        <TextBlock FontSize="15" FontWeight="Bold" Foreground="{DynamicResource FgCard730}"><Run Text="Tasse"/><Run Language="it-it" Text=" e "/><Run Text="Contributi"/></TextBlock>
+                                        <TextBlock x:Name="tbAccumulo730" Text="€ 0.00" FontSize="32" FontWeight="Bold" Foreground="{DynamicResource FgCard730}" Margin="0,10,0,0" Height="36"/>
+                                        <TextBlock FontSize="11" Foreground="{DynamicResource FgMuted}" FontStyle="Italic" Height="37" Margin="0,5,0,0" Text="Da accantonare (INPS + Imp. Sost.)"/>
+                                    </StackPanel>
+                                </Border>
+                                <Border Style="{StaticResource ModernCardBase}" Width="350" Background="{DynamicResource BgCardNettoR}" BorderBrush="{DynamicResource BorderCardNettoR}" BorderThickness="3">
+                                    <StackPanel>
+                                        <TextBlock FontSize="17" FontWeight="Bold" Foreground="{DynamicResource FgCardNettoR}"><Run Text="Nett"/><Run Text="o"/><Run Language="it-it" Text=" "/><Run Text="(bonifico stimato)"/></TextBlock>
+                                        <TextBlock x:Name="tbNettoRealeTasca" Text="€ 0.00" FontSize="36" FontWeight="Black" Foreground="{DynamicResource FgCardNettoR}" Margin="0,5,0,0"/>
+                                        <TextBlock Text="Soldi che finiscono in tasca" FontSize="12" Foreground="{DynamicResource SubFgCardNettoR}" Margin="0,5,0,0" FontStyle="Italic"/>
+                                    </StackPanel>
+                                </Border>
+                            </WrapPanel>
+
+                            <Border Style="{StaticResource ModernCardBase}" Width="615" Height="Auto" HorizontalAlignment="Left" Background="{DynamicResource BgWindow}" BorderBrush="{DynamicResource BorderInput}" BorderThickness="1">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0">
+                                        <Label x:Name="lblConsegneMensile" Content="Numero consegne: 0" FontSize="14" FontWeight="Medium" Foreground="{DynamicResource FgStatsLabels}"/>
+                                        <Label x:Name="lblKmMensile" Content="Km percorsi: 0.0 km" FontSize="14" FontWeight="Medium" Foreground="{DynamicResource FgStatsLabels}"/>
+                                        <Label x:Name="lblConsumoMensile" Content="Consumo registrato: - km/litro" FontSize="14" FontWeight="Medium" Foreground="{DynamicResource FgStatsLabels}"/>
+                                        <Label x:Name="lblIncidenzaMensile" Content="Incidenza carburante: - %" FontSize="14" FontWeight="Medium" Foreground="{DynamicResource FgStatsLabels}"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="20,0">
+                                        <TextBlock Text="EFFICIENZA" Foreground="{DynamicResource FgMuted}" FontSize="12" HorizontalAlignment="Center"/>
+                                        <TextBlock x:Name="tbEfficienzaVotoMensile" Text="10.0" FontSize="42" FontWeight="Black" Foreground="{DynamicResource FgBadgeVoto}" HorizontalAlignment="Center"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Grid>
+            </TabItem>
+
+            <!-- TAB 5: ANNO -->
+            <TabItem Header="Anno" Margin="51,1,-89,-1">
+                <Grid Margin="0,20,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <StackPanel Grid.Row="0" Margin="0,0,0,20" Orientation="Horizontal">
+                        <ComboBox x:Name="cbYear" Width="150" HorizontalAlignment="Left" Margin="0,0,15,0"/>
+                        <Label Content="Imposta Sostitutiva:" Foreground="{DynamicResource FgText}" VerticalAlignment="Center"/>
+                        <ComboBox x:Name="cbTaxRate" Width="70" HorizontalAlignment="Left" Margin="5,0,0,0">
+                            <ComboBoxItem Content="5%" Tag="0.05"/>
+                            <ComboBoxItem Content="15%" Tag="0.15"/>
+                        </ComboBox>
+                    </StackPanel>
+
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                        <StackPanel>
+                            <WrapPanel>
+                                <Border Style="{StaticResource ModernCardBase}" Background="{DynamicResource BgCardLordo}" BorderBrush="{DynamicResource BorderCardLordo}" BorderThickness="2" Width="325">
+                                    <StackPanel>
+                                        <TextBlock Text="Lordo Annuale" FontSize="15" FontWeight="Bold" Foreground="{DynamicResource FgCardLordo}"/>
+                                        <TextBlock x:Name="tbLordoAnno" Text="€ 0.00" FontSize="32" FontWeight="Bold" Foreground="{DynamicResource FgCardLordo}" Margin="0,10,0,0"/>
+                                    </StackPanel>
+                                </Border>
+                                <Border Style="{StaticResource ModernCardBase}" Background="{DynamicResource BgCardNettoB}" BorderBrush="{DynamicResource BorderCardNettoB}" BorderThickness="2" Width="318">
+                                    <StackPanel>
+                                        <TextBlock FontSize="15" FontWeight="Bold" Foreground="{DynamicResource FgCardNettoB}" TextWrapping="Wrap"><Run Text="Netto Bonificato"/><Run Text=" "/><Run Text="(Lordo)"/></TextBlock>
+                                        <TextBlock x:Name="tbNettoBonificatoAnno" Text="€ 0.00" FontSize="32" FontWeight="Bold" Foreground="{DynamicResource FgCardNettoB}" Margin="0,10,0,0"/>
+                                    </StackPanel>
+                                </Border>
+                                <Border Style="{StaticResource ModernCardBase}" Background="{DynamicResource BgCardSpese}" BorderBrush="{DynamicResource BorderCardSpese}" BorderThickness="2" Width="293">
+                                    <StackPanel>
+                                        <TextBlock Text="Spese Carburante" FontSize="15" FontWeight="Bold" Foreground="{DynamicResource FgCardSpese}"/>
+                                        <TextBlock x:Name="tbSpeseCarburanteAnno" Text="€ 0.00" FontSize="32" FontWeight="Bold" Foreground="{DynamicResource FgCardSpese}" Margin="0,10,0,0"/>
+                                    </StackPanel>
+                                </Border>
+                                <Border Style="{StaticResource ModernCardBase}" Background="{DynamicResource BgCard730}" BorderBrush="{DynamicResource BorderCard730}" BorderThickness="2">
+                                    <StackPanel>
+                                        <TextBlock FontSize="15" FontWeight="Bold" Foreground="{DynamicResource FgCard730}"><Run Text="Tasse"/><Run Language="it-it" Text=" e "/><Run Text="Contributi"/></TextBlock>
+                                        <TextBlock x:Name="tbAccumulo730Anno" Text="€ 0.00" FontSize="32" FontWeight="Bold" Foreground="{DynamicResource FgCard730}" Margin="0,10,0,0"/>
+                                        <TextBlock FontSize="11" Foreground="{DynamicResource FgMuted}" FontStyle="Italic"><Run Text="Da accantonare (INPS + Imp. Sost.)"/><LineBreak/><Run/></TextBlock>
+                                    </StackPanel>
+                                </Border>
+                                <Border Style="{StaticResource ModernCardBase}" Width="291" Background="{DynamicResource BgCardNettoR}" BorderBrush="{DynamicResource BorderCardNettoR}" BorderThickness="3">
+                                    <StackPanel>
+                                        <TextBlock FontSize="17" FontWeight="Bold" Foreground="{DynamicResource FgCardNettoR}"><Run Text="Guadagno "/><Run Text="Netto "/></TextBlock>
+                                        <TextBlock x:Name="tbNettoRealeTascaAnno" Text="€ 0.00" FontSize="36" FontWeight="Black" Foreground="{DynamicResource FgCardNettoR}" Margin="0,5,0,0"/>
+                                        <TextBlock Text="Soldi che finiscono in tasca (Bonifici - Benzina)" FontSize="12" Foreground="{DynamicResource SubFgCardNettoR}" Margin="0,5,0,0" FontStyle="Italic"/>
+                                    </StackPanel>
+                                </Border>
+                                <Border Style="{StaticResource ModernCardBase}" Width="350" Background="{DynamicResource BgCardTotale730}" BorderBrush="{DynamicResource BorderCardTotale730}" BorderThickness="3">
+                                    <StackPanel>
+                                        <TextBlock FontSize="17" FontWeight="Bold" Foreground="{DynamicResource FgCardTotale730}"><Run Text="Imponibile Fiscale Annuo"/></TextBlock>
+                                        <TextBlock x:Name="tbNettoTotale730Anno" Text="€ 0.00" FontSize="36" FontWeight="Black" Foreground="{DynamicResource FgCardTotale730}" Margin="0,5,0,0"/>
+                                        <TextBlock x:Name="lblDescNettoTotale730Anno" Text="Base su cui si pagano tasse e INPS (Lordo * 67%)" FontSize="12" Foreground="{DynamicResource SubFgCardTotale730}" Margin="0,5,0,0" FontStyle="Italic"/>
+                                    </StackPanel>
+                                </Border>
+                            </WrapPanel>
+
+                            <Border Style="{StaticResource ModernCardBase}" Width="615" Height="Auto" HorizontalAlignment="Left" Background="{DynamicResource BgWindow}" BorderBrush="{DynamicResource BorderInput}" BorderThickness="1">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0">
+                                        <Label x:Name="lblConsegneAnno" Content="Numero consegne: 0" FontSize="14" FontWeight="Medium" Foreground="{DynamicResource FgStatsLabels}"/>
+                                        <Label x:Name="lblKmAnno" Content="Km percorsi: 0.0 km" FontSize="14" FontWeight="Medium" Foreground="{DynamicResource FgStatsLabels}"/>
+                                        <Label x:Name="lblConsumoAnno" Content="Consumo registrato: - km/litro" FontSize="14" FontWeight="Medium" Foreground="{DynamicResource FgStatsLabels}"/>
+                                        <Label x:Name="lblIncidenzaAnno" Content="Incidenza carburante: - %" FontSize="14" FontWeight="Medium" Foreground="{DynamicResource FgStatsLabels}"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="20,0">
+                                        <TextBlock Text="EFFICIENZA" Foreground="{DynamicResource FgMuted}" FontSize="12" HorizontalAlignment="Center"/>
+                                        <TextBlock x:Name="tbEfficienzaVotoAnno" Text="10.0" FontSize="42" FontWeight="Black" Foreground="{DynamicResource FgBadgeVoto}" HorizontalAlignment="Center"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>
